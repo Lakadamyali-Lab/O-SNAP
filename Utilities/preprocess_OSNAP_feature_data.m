@@ -61,7 +61,11 @@ end
 if ~isempty(options.groups)
     feature_data_norm = feature_data_norm(ismember(feature_data_norm.group,options.groups),:);
 end
-group_values = feature_data_norm.group;
+if ismember('group', feature_data_norm.Properties.VariableNames)
+    group_values = feature_data_norm.group;
+else
+    group_values = [];
+end
 %% Remove unnecessary columns (group, bio replicate)
 if options.numeric_only
     feature_data_norm = feature_data_norm(:,vartype('numeric'));
@@ -82,24 +86,32 @@ if options.normalize
     if options.remove_NaN
         is_nan_all_row = all(ismissing(feature_data_norm{:,vartype('numeric')}),2);
         feature_data_norm = feature_data_norm(~is_nan_all_row,:);
-        group_values = group_values(~is_nan_all_row);
+        if ~isempty(group_values)
+            group_values = group_values(~is_nan_all_row);
+        end
         is_nan_any_col = any(ismissing(feature_data_norm),1);
         feature_data_norm = feature_data_norm(:,~is_nan_any_col);
         is_nan_any_row = any(ismissing(feature_data_norm{:,vartype('numeric')}),2);
         feature_data_norm = feature_data_norm(~is_nan_any_row,:);
-        group_values = group_values(~is_nan_any_row);
+        if ~isempty(group_values)
+            group_values = group_values(~is_nan_any_row);
+        end
     end
 end
 %% Remove NaNs
 if options.remove_NaN
     is_nan_all_row = all(ismissing(feature_data_norm{:,vartype('numeric')}),2);
     feature_data_norm = feature_data_norm(~is_nan_all_row,:);
-    group_values = group_values(~is_nan_all_row);
+    if ~isempty(group_values)
+        group_values = group_values(~is_nan_all_row);
+    end
     is_nan_any_col = any(ismissing(feature_data_norm),1);
     feature_data_norm = feature_data_norm(:,~is_nan_any_col);
     is_nan_any_row = any(ismissing(feature_data_norm{:,vartype('numeric')}),2);
     feature_data_norm = feature_data_norm(~is_nan_any_row,:);
-    group_values = group_values(~is_nan_any_row);
+    if ~isempty(group_values)
+        group_values = group_values(~is_nan_any_row);
+    end
 end
 end
 
